@@ -21,8 +21,7 @@ class ChaptersController < ApplicationController
 
   # GET /chapters/new
   def new
-    @active_chapter = Chapter.active
-    @chapter        = Chapter.new
+    @chapter        = Chapter.new(active: true, number: Chapter.active.try(:number).to_i + 1)
   end
 
   # GET /chapters/1/edit
@@ -33,11 +32,15 @@ class ChaptersController < ApplicationController
   # POST /chapters.json
   def create
     active_chapter = Chapter.active
+
     if active_chapter
       active_chapter.update_column :active, false
     end
 
     @chapter = Chapter.new(chapter_params)
+
+    #enforce rule 7
+    @chapter.active = true
 
     respond_to do |format|
       if @chapter.save
