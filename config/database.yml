@@ -5,6 +5,6 @@ development:
   database: oc_test_assignment_dev
   pool: 10
   username: postgres
-  password:
+  password: 1337wizard
   host: 127.0.0.1
 

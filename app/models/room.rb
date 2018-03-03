@@ -16,7 +16,9 @@ class Room < ApplicationRecord
                                     }
 
   before_validation :assign_door
-  before_validation :assign_chapter
+  
+  #dont need this, can use associations
+  #before_validation :assign_chapter
 
   scope :active, -> (chapter_id) { where(chapter_id: chapter_id) }
 
