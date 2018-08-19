@@ -42,16 +42,19 @@ class ChaptersControllerTest < ActionDispatch::IntegrationTest
     @chapter_one.reload
     assert :success
     assert_equal false, @chapter_one.active
+    assert_redirected_to @chapter_one
 
     put "/chapters/#{@chapter_two.id}", params: {chapter: {number: '1', active: '1'}}
     @chapter_two.reload
     assert :success
     assert_equal true, @chapter_two.active
+    assert_redirected_to @chapter_two
   end
   
   test 'should be successful to destroy a chapter' do
     delete "/chapters/#{@chapter_one.id}"
     assert :success
+    assert_redirected_to chapters_url
   end
   
 end
