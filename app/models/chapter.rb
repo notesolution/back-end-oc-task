@@ -6,11 +6,11 @@ class Chapter < ApplicationRecord
   has_many :edges
 
   validate :uniq_active
+  validate :limit_rooms_count_range
 
   before_create :generate_rooms_and_edges
-
-  scope :active, -> { where(active: true).first }
-
+  before_destroy :destroy_relative_rooms_and_edges
+  
   def self.active
     where(active: true).last
   end
@@ -52,8 +52,19 @@ class Chapter < ApplicationRecord
   end
 
   def uniq_active
-    if self.active && Chapter.where(active: true).first
+    if self.active && Chapter.active.present?
       errors.add(:active, 'only 1 active chapter may exists in the system')
     end
+  end
+  
+  def limit_rooms_count_range
+    if self.rooms_count && (self.rooms_count.to_i < 2 || self.rooms_count.to_i > 45)
+      errors.add(:rooms_count, 'should be no less than 2 and no more than 45')
+    end
+  end
+  
+  def destroy_relative_rooms_and_edges
+    self.edges.destroy_all
+    self.rooms.destroy_all
   end
 end
