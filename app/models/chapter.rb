@@ -16,7 +16,35 @@ class Chapter < ApplicationRecord
   end
 
   def generate_rooms_and_edges
-    #TODO
+    max_room = self.rooms_count.to_i
+    new_room_list = []
+    (1..max_room).each do |room_number|
+      final = room_number == max_room
+      new_room = self.rooms.build number: room_number, final: final
+      new_room_list << new_room
+    end
+    
+    order = if max_room == 2
+              [1, 2]
+            else
+              shuffled_order = (2..(max_room - 1)).to_a.shuffle
+              [1] + shuffled_order + [max_room]
+            end
+
+    edges = {}
+    order.each_with_index do |room_number, index|
+      edges[room_number] = [order&.[](index+1)].compact
+    end
+
+    edges.each do |parent_room_number, values|
+      values.each do |child_room_number|
+        parent_room = new_room_list[parent_room_number.to_i - 1]
+        child_room  = new_room_list[child_room_number.to_i - 1]
+    
+        self.edges.build parent_room: parent_room,
+                         child_room: child_room
+      end
+    end
   end
 
   def uniq_active
